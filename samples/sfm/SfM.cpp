@@ -667,8 +667,6 @@ namespace
         {
             ImageDataReader::Data imageData;
             ImuDataReader::Data imuData;
-//            imageDataReader_.read(imageData);
-//            IMUDataInterpolator_.interpolate(imageData.t, imuData);
 
             if (!imageDataReader_.read(imageData))
             {
@@ -735,42 +733,42 @@ namespace
 
     void SfMHarrisPyrLK::printPerfs() const
     {
-//        vx_perf_t perf;
+        vx_perf_t perf;
 
-//        NVXIO_SAFE_CALL( vxQueryGraph(main_graph_, VX_GRAPH_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "Graph Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryGraph(main_graph_, VX_GRAPH_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "Graph Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        NVXIO_SAFE_CALL( vxQueryNode(cvt_color_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "\t Color Convert Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryNode(cvt_color_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "\t Color Convert Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        NVXIO_SAFE_CALL( vxQueryNode(pyr_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "\t Pyramid Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryNode(pyr_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "\t Pyramid Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        NVXIO_SAFE_CALL( vxQueryNode(opt_flow_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "\t Optical Flow Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryNode(opt_flow_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "\t Optical Flow Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        NVXIO_SAFE_CALL( vxQueryNode(feature_track_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "\t Feature Track Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryNode(feature_track_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "\t Feature Track Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        NVXIO_SAFE_CALL( vxQueryNode(find_fundamental_mat_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "\t Find Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryNode(find_fundamental_mat_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "\t Find Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        NVXIO_SAFE_CALL( vxQueryNode(decompose_fundamental_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "\t Decompose Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryNode(decompose_fundamental_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "\t Decompose Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        NVXIO_SAFE_CALL( vxQueryNode(two_view_triangulation_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//        std::cout << "\t Two View Triangulation Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        NVXIO_SAFE_CALL( vxQueryNode(two_view_triangulation_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+        std::cout << "\t Two View Triangulation Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//        if (!useExternalScaleData_)
-//        {
-//            NVXIO_SAFE_CALL( vxQueryNode(find_ground_plane_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//            std::cout << "\t Find Ground Plane Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        if (!useExternalScaleData_)
+        {
+            NVXIO_SAFE_CALL( vxQueryNode(find_ground_plane_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+            std::cout << "\t Find Ground Plane Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-//            NVXIO_SAFE_CALL( vxQueryNode(calc_scale_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-//            std::cout << "\t Scale Calculate Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
-//        }
+            NVXIO_SAFE_CALL( vxQueryNode(calc_scale_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+            std::cout << "\t Scale Calculate Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+        }
 
-//        std::cout << std::endl;
+        std::cout << std::endl;
     }
 
     void SfMHarrisPyrLK::release()
@@ -1038,14 +1036,13 @@ nvx::SfM::SfMParams::SfMParams()
     pFy = 723.781128f;
     pCx = 512.f;
     pCy = 512.f;
-    pK1 = -4.5004098982747082e-01;
-    pK2 = 3.2374615508242260e-01;
-    pK3 = -1.8244057511808867e-01;
 
     // pinhole camera distortion
-
+    pK1 = 0.0f;
+    pK2 = 0.0f;
     pP1 = 0.0f;
     pP2 = 0.0f;
+    pK3 = 0.0f;
 
     // parameters for triangulation
     minPixelDis = 1.0;
@@ -1407,10 +1404,10 @@ static vx_status VX_CALLBACK findgroundplane_kernel(vx_node /*node*/, const vx_r
     if ((numP1 != numP2) || (numP1 != numP3D))
     {
         vxWriteMatrix(gp, plane.data());
-//        vxAddLogEntry((vx_reference)context, VX_FAILURE,
-//                      "input arrays have different sizes "
-//                      "(" VX_FMT_SIZE " for points2d1, " VX_FMT_SIZE " for points2d2, " VX_FMT_SIZE " for triangulatedPoints3d)",
-//                      numP1, numP2, numP3D);
+        vxAddLogEntry((vx_reference)context, VX_FAILURE,
+                      "input arrays have different sizes "
+                      "(" VX_FMT_SIZE " for points2d1, " VX_FMT_SIZE " for points2d2, " VX_FMT_SIZE " for triangulatedPoints3d)",
+                      numP1, numP2, numP3D);
         return VX_FAILURE;
     }
 
@@ -1418,10 +1415,10 @@ static vx_status VX_CALLBACK findgroundplane_kernel(vx_node /*node*/, const vx_r
     if (numP1 < minNumPointsForH) //in this case homagraphy cannot be estimated
     {
         vxWriteMatrix(gp, plane.data());
-//        vxAddLogEntry((vx_reference)context, VX_FAILURE,
-//                      "not enough points for Ground Plane estimation"
-//                      " (" VX_FMT_SIZE " is needed, but only " VX_FMT_SIZE " was supplied)",
-//                      minNumPointsForH, numP1);
+        vxAddLogEntry((vx_reference)context, VX_FAILURE,
+                      "not enough points for Ground Plane estimation"
+                      " (" VX_FMT_SIZE " is needed, but only " VX_FMT_SIZE " was supplied)",
+                      minNumPointsForH, numP1);
         return status;
     }
 
@@ -1476,10 +1473,10 @@ static vx_status VX_CALLBACK findgroundplane_kernel(vx_node /*node*/, const vx_r
         vxReleaseArray(&bottomPoints1);
         vxReleaseArray(&bottomPoints2);
 
-//        vxAddLogEntry((vx_reference)context, VX_FAILURE,
-//                      "not enough features on ground plane for Ground Plane estimation"
-//                      " (" VX_FMT_SIZE " is needed, but only " VX_FMT_SIZE " was on the ground plane)",
-//                      minNumPointsForH, numOfBottomPoints);
+        vxAddLogEntry((vx_reference)context, VX_FAILURE,
+                      "not enough features on ground plane for Ground Plane estimation"
+                      " (" VX_FMT_SIZE " is needed, but only " VX_FMT_SIZE " was on the ground plane)",
+                      minNumPointsForH, numOfBottomPoints);
         return status;
     }
 
@@ -1537,10 +1534,10 @@ static vx_status VX_CALLBACK findgroundplane_kernel(vx_node /*node*/, const vx_r
     if (gpCloud.size() < numNumPointsForGP)
     {
         vxWriteMatrix(gp, plane.data());
-//        vxAddLogEntry((vx_reference)context, VX_FAILURE,
-//                      "not enough triangulated points for Ground Plane estimation"
-//                      " (" VX_FMT_SIZE " is needed, but only " VX_FMT_SIZE " was found)",
-//                      numNumPointsForGP, gpCloud.size());
+        vxAddLogEntry((vx_reference)context, VX_FAILURE,
+                      "not enough triangulated points for Ground Plane estimation"
+                      " (" VX_FMT_SIZE " is needed, but only " VX_FMT_SIZE " was found)",
+                      numNumPointsForGP, gpCloud.size());
 
         return status;
     }

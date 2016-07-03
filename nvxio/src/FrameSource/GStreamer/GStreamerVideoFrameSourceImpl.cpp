@@ -46,8 +46,7 @@ GStreamerVideoFrameSourceImpl::GStreamerVideoFrameSourceImpl(vx_context context,
     GStreamerBaseFrameSourceImpl(context, FrameSource::VIDEO_SOURCE, "GstreamerVideoFrameSource"),
     fileName(path)
 {
-
-//#ifndef USE_GSTREAMER_OMX
+#ifndef USE_GSTREAMER_OMX
     const std::map<std::string, guint> features_list =
     {
         { "omxmpeg2videodec", GST_RANK_NONE },
@@ -57,8 +56,7 @@ GStreamerVideoFrameSourceImpl::GStreamerVideoFrameSourceImpl(vx_context context,
         { "omxh264dec", GST_RANK_NONE },
         { "omxmpeg4videodec", GST_RANK_NONE },
     };
-    int errnos=3;
-    fprintf(stderr, "errno = %d \n", errnos);
+
     GstElementFactory* factory = NULL;
     for (auto p : features_list)
     {
@@ -69,14 +67,12 @@ GStreamerVideoFrameSourceImpl::GStreamerVideoFrameSourceImpl(vx_context context,
             gst_object_unref (factory);
         }
     }
-//#endif
+#endif
 }
 
 GstAutoplugSelectResult GStreamerVideoFrameSourceImpl::autoPlugSelect(GstElement *, GstPad *,
                               GstCaps * caps, GstElementFactory *, gpointer)
 {
-    int errnos=4;
-    fprintf(stderr, "errno = %d \n", errnos);
     std::unique_ptr<char[], GlibDeleter> capsStr(gst_caps_to_string(caps));
     if (strstr(capsStr.get(), "video"))
     {
@@ -90,7 +86,6 @@ GstAutoplugSelectResult GStreamerVideoFrameSourceImpl::autoPlugSelect(GstElement
 
 bool GStreamerVideoFrameSourceImpl::InitializeGstPipeLine()
 {
-
     GstStateChangeReturn status;
     end = true;
 
@@ -198,8 +193,6 @@ bool GStreamerVideoFrameSourceImpl::InitializeGstPipeLine()
     if (status == GST_STATE_CHANGE_ASYNC)
     {
         // wait for status update
-        int errnos=5;
-        fprintf(stderr, "errno = %d \n", errnos);
         status = gst_element_get_state(GST_ELEMENT(pipeline), NULL, NULL, GST_CLOCK_TIME_NONE);
     }
     if (status == GST_STATE_CHANGE_FAILURE)

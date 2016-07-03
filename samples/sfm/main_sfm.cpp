@@ -25,10 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#define USE_OPENCV
-#define USE_GUI
-#define USE_GSTREAMER_OMX
-//#define USE_GSTREAMER
+
 #include <iostream>
 #include <string>
 #include <memory>
@@ -60,12 +57,7 @@ int main(int argc, char* argv[])
         // Parse command line arguments
         //
 
-//        std::string sourceUri = app.findSampleFilePath("file:///dev/video0");
-
-// "/home/ubuntu/VisionWorks-SFM-0.82-Samples/data/sfm/parking_sfm.mp4";
-
-
-        std::string sourceUri = "/home/px4/test.mp4";
+        std::string sourceUri = app.findSampleFilePath("sfm/parking_sfm.mp4");
         std::string configFile = app.findSampleFilePath("sfm/sfm_config.ini");
         bool fullPipeline = false;
         std::string maskFile;
@@ -138,8 +130,6 @@ int main(int argc, char* argv[])
         if (!source || !source->open())
         {
             std::cout << "Can't open source file: " << sourceUri << std::endl;
-//            int haha=3;
-//            fprintf(stderr, "errno = %d \n", haha);
             return nvxio::Application::APP_EXIT_CODE_NO_RESOURCE;
         }
 
@@ -302,36 +292,7 @@ int main(int argc, char* argv[])
 
             filterPoints(sfm->getPointCloud(), filteredPoints);
             render3D->putPointCloud(filteredPoints, model, pcStyle);
-//            std::cout<< *filteredPoints[1] << std::endl;
-            vx_size numOfPoints = 0;
-            NVXIO_SAFE_CALL( vxQueryArray(filteredPoints, VX_ARRAY_ATTRIBUTE_NUMITEMS, &numOfPoints, sizeof(numOfPoints)) );
 
-//            vx_size i, stride = 0ul;
-//            void *base = NULL;
-            /* access entire array at once */
-//            vxAccessArrayRange(filteredPoints, 0, numOfPoints, &stride, &base, VX_READ_AND_WRITE);
-
-
-
-
-
-            //print points
-//            vx_size stride = 0;
-//            void *ptr = NULL;
-//            vxAccessArrayRange(filteredPoints, 0, numOfPoints, &stride, &ptr, VX_READ_ONLY);
-//            for (size_t i = 0; i < numOfPoints; i++)
-//                 {
-//                      nvx_point3f_t pt = vxArrayItem(nvx_point3f_t, ptr, i, stride);
-//                      if (isPointValid(pt))
-//                                {
-//                      std::cout<< pt.x<<" "<<pt.y<<" "<<pt.z<<std::endl;
-//                      }
-//                  }
-//                  vxCommitArrayRange(filteredPoints, 0, numOfPoints, ptr);
-
-//            vxQueryArray(filteredPoints, VX_ARRAY_ATTRIBUTE_NUMITEMS, &numOfPoints, sizeof(numOfPoints));
-            //std::cout<< filteredPoints[1]<<std::endl;
-//            std::cout << numOfPoints << std::endl;
             if (eventData.showFences)
             {
                 fenceDetector.getFencePlaneVertices(filteredPoints, planesVertices);
