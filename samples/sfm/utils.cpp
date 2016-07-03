@@ -120,9 +120,9 @@ bool read(const std::string &nf, nvx::SfM::SfMParams &config, std::string &messa
     ftparser->addParameter("pK2",nvxio::OptionHandler::real(&config.pK2,
              nvxio::ranges::atLeast(-1.0f)));
     ftparser->addParameter("pP1",nvxio::OptionHandler::real(&config.pP1,
-             nvxio::ranges::atLeast(-1.0f)));
+             nvxio::ranges::atLeast(0.0f)));
     ftparser->addParameter("pP2",nvxio::OptionHandler::real(&config.pP2,
-             nvxio::ranges::atLeast(-1.0f)));
+             nvxio::ranges::atLeast(0.0f)));
     ftparser->addParameter("pK3",nvxio::OptionHandler::real(&config.pK3,
              nvxio::ranges::atLeast(-1.0f)));
 

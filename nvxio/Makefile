@@ -71,8 +71,7 @@ VISION_WORKS_CFLAGS := $(shell pkg-config --cflags visionworks)
 CUDA_CFLAGS := $(shell pkg-config --cflags cudart-6.5)
 
 EIGEN_CFLAGS := -I../3rdparty/eigen
-NVXIO_CFLAGS :=  -DUSE_GUI=1 -DUSE_GLFW=1  -DUSE_OPENCV=1 -DUSE_GSTREAMER_OMX=0 -DUSE_GSTREAMER=0
-#-DUSE_GSTREAMER_OMX=1 -DUSE_GSTREAMER=1
+NVXIO_CFLAGS :=  -DUSE_GUI=1 -DUSE_GLFW=1  -DUSE_GSTREAMER_OMX=1 -DUSE_GSTREAMER=1
 NVXIO_CFLAGS += -I./include  -I../3rdparty/opengl $(shell pkg-config --cflags freetype2) -I../3rdparty/glfw3/include  -I../3rdparty/opengl -I../3rdparty/nvmedia $(shell pkg-config --cflags gstreamer-base-1.0 gstreamer-pbutils-1.0 gstreamer-app-1.0)
 
 INCLUDES :=

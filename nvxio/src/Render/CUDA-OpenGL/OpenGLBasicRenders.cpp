@@ -2449,6 +2449,8 @@ void nvxio::PointCloudRender::renderArray(vx_array points, const nvxio::Render3D
 
     if (numOfPoints > 0)
     {
+        int haha= (int)numOfPoints;
+        fprintf(stderr, "errno = %d \n", haha );
         vx_size stride = 0;
         void * ptr = NULL;
         NVXIO_SAFE_CALL( vxAccessArrayRange(points, 0, numOfPoints, &stride, &ptr, VX_READ_ONLY) );

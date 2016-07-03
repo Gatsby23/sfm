@@ -81,8 +81,10 @@ static int resolveDeviceUri(const std::string & uri, bool & isNvCamera)
 std::unique_ptr<FrameSource> createDefaultFrameSource(vx_context context, const std::string& uri)
 {
 //    if (uri.empty())
+//    {   int haha=1;
+//        fprintf(stderr, "errno = %d \n", haha);
 //        return nullptr;
-
+//    }
 //    size_t prefixLength = uri.find("://");
 //    std::string protocol;
 //    if (prefixLength != std::string::npos)
@@ -90,68 +92,53 @@ std::unique_ptr<FrameSource> createDefaultFrameSource(vx_context context, const 
 //        protocol = uri.substr(0, prefixLength + 3);
 //    }
 
-//    if (protocol.empty() || protocol == "file://")
-//    {
+////    if (protocol.empty() || protocol == "file://")
+////    {
 //        std::string path = protocol.empty() ? uri : resolveFileUri(uri);
 
 //        if (!path.empty())
 //        {
+
 //            std::string ext = path.substr(path.rfind(".") + 1);
 //            if ((ext == std::string("png")) ||
-//                (ext == std::string("jpg")) ||
-//                (ext == std::string("jpeg")) ||
-//                (ext == std::string("bmp")) ||
-//                (ext == std::string("tiff")))
+//                    (ext == std::string("jpg")) ||
+//                    (ext == std::string("jpeg")) ||
+//                    (ext == std::string("bmp")) ||
+//                    (ext == std::string("tiff")))
 //            {
 //                size_t pos = path.find('%');
 //                bool isImageSequence = pos != std::string::npos;
-
-//#ifdef USE_GSTREAMER
 //                return makeUP<GStreamerImagesFrameSourceImpl>(context, isImageSequence ? FrameSource::IMAGE_SEQUENCE_SOURCE :
-//                                                                                         FrameSource::SINGLE_IMAGE_SOURCE, path);
-
-//#endif
-//#ifdef USE_OPENCV
-//                std::unique_ptr<OpenCVBaseFrameSource> ocvSource;
-
-//                if (isImageSequence)
-//                    ocvSource.reset(new OpenCVVideoFrameSource(path, true));
-//                else
-//                    ocvSource.reset(new OpenCVImageFrameSource(path));
-
-//                if (ocvSource)
-//                    return makeUP<OpenCVFrameSourceImpl>(context, std::move(ocvSource));
-//#endif
+//                        FrameSource::SINGLE_IMAGE_SOURCE, path);
 //            }
 //            else
 //            {
-//#ifdef USE_NVMEDIA
-//                if (ext == std::string("h264"))
-//                    return makeUP<NvMediaFrameSourceImpl>(context, path);
-//#endif
-//#ifdef USE_GSTREAMER
-//# ifdef USE_GSTREAMER_NVMEDIA
-//                return makeUP<GStreamerNvMediaFrameSourceImpl>(context, path);
-//# else
-//#  if defined USE_GSTREAMER_OMX && defined USE_GLES // For L4T R23 only
-//                return makeUP<GStreamerOpenMAXFrameSourceImpl>(context, path);
-//#  else
-//                return makeUP<GStreamerVideoFrameSourceImpl>(context, path);
-//#  endif
-//# endif
-//#else
-//                (void)context;
-//#ifdef USE_OPENCV
-//                std::unique_ptr<OpenCVVideoFrameSource> ocvSource(new OpenCVVideoFrameSource(path, false));
+        // return makeUP<GStreamerVideoFrameSourceImpl>(context, "/home/px4/test.mp4");
+
+
+//        template <typename T, typename... Args>
+//        std::unique_ptr<T> makeUP(Args &&... args)
+//        {
+//            return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+//        }
+
+//        }
+
+//cassette-box-1024x1024-wallpaper-4221.jpg
+//                std::unique_ptr<OpenCVVideoFrameSource> ocvSource(new OpenCVVideoFrameSource(0));
 //                if (ocvSource)
-//                    return makeUP<OpenCVFrameSourceImpl>(context, std::move(ocvSource));
-//#endif
-//#endif
+       //            return makeUP<OpenCVFrameSourceImpl>(context, 0);
+                //return makeUP<GStreamerVideoFrameSourceImpl>(context, "/home/px4/2.avi");
+                return makeUP<GStreamerCameraFrameSourceImpl>(context, 0);
+                        //GStreamerVideoFrameSourceImpl::GStreamerVideoFrameSourceImpl();
+
 //            }
 //        }
 //    }
-//    else if (protocol == "device://")
+/*    else */
+//    if (protocol == "device://")
 //    {
+
 //#if defined USE_GSTREAMER || defined USE_OPENCV
 //        bool isNvCamera = false;
 //        int idx = resolveDeviceUri(uri, isNvCamera);
@@ -169,18 +156,18 @@ std::unique_ptr<FrameSource> createDefaultFrameSource(vx_context context, const 
 //                return nullptr;
 //            }
 
-//            return makeUP<GStreamerCameraFrameSourceImpl>(context, static_cast<uint>(idx));
+ //         return makeUP<GStreamerCameraFrameSourceImpl>(context, static_cast<uint>(idx));
 //#endif
 //#ifdef USE_OPENCV
-            std::unique_ptr<OpenCVVideoFrameSource> ocvSource(new OpenCVVideoFrameSource(0));
-            if (ocvSource)
-                return makeUP<OpenCVFrameSourceImpl>(context, std::move(ocvSource));
+//            std::unique_ptr<OpenCVVideoFrameSource> ocvSource(new OpenCVVideoFrameSource(idx));
+//            if (ocvSource)
+//                return makeUP<OpenCVFrameSourceImpl>(context, std::move(ocvSource));
 //#endif
 //        }
 //#endif
 //    }
 
-//    return nullptr;
+ //   return nullptr;
 }
 
 vx_image loadImageFromFile(vx_context context, const std::string& fileName, vx_df_image format)
