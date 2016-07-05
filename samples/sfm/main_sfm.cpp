@@ -87,10 +87,7 @@ int VX_to_CV_Image(Mat** mat, vx_image image)
 
     *mat = pMat;
 
-    delete mat;
-//    delete m_cv;
-//    //delete src;
-    delete pMat;
+    delete m_cv;
 
     return status;
 }
@@ -264,7 +261,10 @@ int main(int argc, char* argv[])
         {
             std::cerr << "Failed to initialize the algorithm" << std::endl;
             return nvxio::Application::APP_EXIT_CODE_ERROR;
-        }
+        }//                cv::Mat fran=cv::Mat::eye(100,100,CV_8UC3);
+        //                cv::gpu::GpuMat frames,frame1;
+        //                frames.upload(fran);
+        //                cv::gpu::cvtColor(frames,frame1,CV_BGR2GRAY);
 
         const vx_size maxNumOfPoints = 2000;
         const vx_size maxNumOfPlanesVertices = 2000;
