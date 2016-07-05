@@ -733,42 +733,42 @@ namespace
 
     void SfMHarrisPyrLK::printPerfs() const
     {
-        vx_perf_t perf;
+//        vx_perf_t perf;
 
-        NVXIO_SAFE_CALL( vxQueryGraph(main_graph_, VX_GRAPH_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "Graph Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryGraph(main_graph_, VX_GRAPH_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "Graph Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        NVXIO_SAFE_CALL( vxQueryNode(cvt_color_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "\t Color Convert Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryNode(cvt_color_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "\t Color Convert Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        NVXIO_SAFE_CALL( vxQueryNode(pyr_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "\t Pyramid Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryNode(pyr_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "\t Pyramid Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        NVXIO_SAFE_CALL( vxQueryNode(opt_flow_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "\t Optical Flow Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryNode(opt_flow_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "\t Optical Flow Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        NVXIO_SAFE_CALL( vxQueryNode(feature_track_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "\t Feature Track Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryNode(feature_track_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "\t Feature Track Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        NVXIO_SAFE_CALL( vxQueryNode(find_fundamental_mat_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "\t Find Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryNode(find_fundamental_mat_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "\t Find Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        NVXIO_SAFE_CALL( vxQueryNode(decompose_fundamental_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "\t Decompose Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryNode(decompose_fundamental_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "\t Decompose Fundamental Mat Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        NVXIO_SAFE_CALL( vxQueryNode(two_view_triangulation_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-        std::cout << "\t Two View Triangulation Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        NVXIO_SAFE_CALL( vxQueryNode(two_view_triangulation_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//        std::cout << "\t Two View Triangulation Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-        if (!useExternalScaleData_)
-        {
-            NVXIO_SAFE_CALL( vxQueryNode(find_ground_plane_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-            std::cout << "\t Find Ground Plane Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        if (!useExternalScaleData_)
+//        {
+//            NVXIO_SAFE_CALL( vxQueryNode(find_ground_plane_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//            std::cout << "\t Find Ground Plane Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
 
-            NVXIO_SAFE_CALL( vxQueryNode(calc_scale_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
-            std::cout << "\t Scale Calculate Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
-        }
+//            NVXIO_SAFE_CALL( vxQueryNode(calc_scale_node_, VX_NODE_ATTRIBUTE_PERFORMANCE, &perf, sizeof(perf)) );
+//            std::cout << "\t Scale Calculate Time : " << perf.tmp / 1000000.0 << " ms" << std::endl;
+//        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
     }
 
     void SfMHarrisPyrLK::release()
