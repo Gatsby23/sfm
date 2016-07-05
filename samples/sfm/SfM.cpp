@@ -878,6 +878,11 @@ namespace
     {
         vx_image frameGray = vxCreateImage(context_, width_, height_, VX_DF_IMAGE_U8);
         NVXIO_CHECK_REFERENCE(frameGray);
+        vx_uint32 width = 0;
+        vx_uint32 height = 0;
+        vxQueryImage(frame, VX_IMAGE_ATTRIBUTE_WIDTH, (void *)&width, sizeof(width));
+        vxQueryImage(frame, VX_IMAGE_ATTRIBUTE_HEIGHT, (void *)&height, sizeof(height));
+
 
         NVXIO_SAFE_CALL( vxuColorConvert(context_, frame, frameGray) );
         NVXIO_SAFE_CALL( vxuGaussianPyramid(context_, frameGray, (vx_pyramid)vxGetReferenceFromDelay(pyr_delay_, 0)) );
