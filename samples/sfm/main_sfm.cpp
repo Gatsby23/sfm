@@ -32,7 +32,8 @@
 #include <NVX/nvx.h>
 #include <NVX/nvx_timer.hpp>
 #include <NVX/sfm/sfm.h>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include "NVXIO/Application.hpp"
 #include "NVXIO/FrameSource.hpp"
 #include "NVXIO/Utility.hpp"
@@ -44,6 +45,57 @@
 //
 // main - Application entry point
 //
+using namespace cv;
+int VX_to_CV_Image(Mat** mat, vx_image image)
+{
+    vx_status status = VX_SUCCESS;
+    vx_uint32 width = 0; vx_uint32 height = 0; vx_df_image format = VX_DF_IMAGE_VIRT; int CV_format = 0; vx_size planes = 0;
+
+    vxQueryImage(image, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+    vxQueryImage(image, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
+    vxQueryImage(image, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
+    vxQueryImage(image, VX_IMAGE_ATTRIBUTE_PLANES, &planes, sizeof(planes));
+
+    if (format == VX_DF_IMAGE_U8)CV_format = CV_8U;
+    if (format == VX_DF_IMAGE_S16)CV_format = CV_16S;
+    if (format == VX_DF_IMAGE_RGBX)CV_format = CV_8UC4;
+
+    if (format != VX_DF_IMAGE_U8 && format != VX_DF_IMAGE_S16 && format != VX_DF_IMAGE_RGBX)
+    {
+        vxAddLogEntry((vx_reference)image, VX_ERROR_INVALID_FORMAT, "VX_to_CV_Image ERROR: Image type not Supported in this RELEASE\n"); return VX_ERROR_INVALID_FORMAT;
+    }
+
+    Mat * m_cv;	m_cv = new Mat(height, width, CV_format); Mat *pMat = (Mat *)m_cv;
+    vx_rectangle_t rect; rect.start_x = 0; rect.start_y = 0; rect.end_x = width; rect.end_y = height;
+
+    vx_uint8 *src[4] = { NULL, NULL, NULL, NULL }; vx_uint32 p; void *ptr = NULL;
+    vx_imagepatch_addressing_t addr[4] = { 0, 0, 0, 0 }; vx_uint32 y = 0u;
+
+    for (p = 0u; (p < (int)planes); p++)
+    {
+        vxAccessImagePatch(image, &rect, p, &addr[p], (void **)&src[p], VX_READ_ONLY);
+        size_t len = addr[p].stride_x * (addr[p].dim_x * addr[p].scale_x) / VX_SCALE_UNITY;
+        for (y = 0; y < height; y += addr[p].step_y)
+        {
+            ptr = vxFormatImagePatchAddress2d(src[p], 0, y - rect.start_y, &addr[p]);
+            memcpy(pMat->data + y * pMat->step, ptr, len);
+        }
+    }
+
+    for (p = 0u; p < (int)planes; p++)
+        vxCommitImagePatch(image, &rect, p, &addr[p], src[p]);
+
+    *mat = pMat;
+
+    delete mat;
+//    delete m_cv;
+//    //delete src;
+    delete pMat;
+
+    return status;
+}
+
+
 
 int main(int argc, char* argv[])
 {
@@ -231,7 +283,8 @@ int main(int argc, char* argv[])
         nvxio::Render3D::PlaneStyle fStyle = {0, 10};
 
         GroundPlaneSmoother groundPlaneSmoother(7);
-
+        Mat *opencv_frame;
+        opencv_frame=new Mat(1920, 1080, CV_8UC3);
         nvx::Timer totalTimer;
         totalTimer.tic();
         double proc_ms = 0;
@@ -277,6 +330,10 @@ int main(int argc, char* argv[])
                 // Process
                 nvx::Timer procTimer;
                 procTimer.tic();
+
+                VX_to_CV_Image(&opencv_frame,frame);
+                //std::cout << *opencv_frame->empty() << std::endl;
+
                 sfm->track(frame, mask);
                 proc_ms = procTimer.toc();
             }
