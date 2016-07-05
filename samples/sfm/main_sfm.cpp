@@ -29,11 +29,10 @@
 #include <iostream>
 #include <string>
 #include <memory>
-
 #include <NVX/nvx.h>
 #include <NVX/nvx_timer.hpp>
 #include <NVX/sfm/sfm.h>
-
+#include <opencv2/gpu/gpu.hpp>
 #include "NVXIO/Application.hpp"
 #include "NVXIO/FrameSource.hpp"
 #include "NVXIO/Utility.hpp"
@@ -41,7 +40,6 @@
 #include "SfM.hpp"
 #include "utils.hpp"
 #include "NVXIO/Render3D.hpp"
-
 
 //
 // main - Application entry point
@@ -117,6 +115,7 @@ int main(int argc, char* argv[])
         //
         // Add SfM kernels
         //
+
 
         NVXIO_SAFE_CALL(nvxSfmRegisterKernels(context));
 
@@ -241,6 +240,11 @@ int main(int argc, char* argv[])
         {
             if (!eventData.pause)
             {
+//                cv::Mat fran=cv::Mat::eye(100,100,CV_8UC3);
+//                cv::gpu::GpuMat frames,frame1;
+//                frames.upload(fran);
+//                cv::gpu::cvtColor(frames,frame1,CV_BGR2GRAY);
+
                 frameStatus = source->fetch(frame);
 
                 if (frameStatus == nvxio::FrameSource::TIMEOUT)

@@ -80,7 +80,7 @@ EXTERNAL_LIBS += $(shell pkg-config --libs visionworks)
 
 EIGEN_CFLAGS := -I../../3rdparty/eigen
 
-NVXIO_CFLAGS := -I../../nvxio/include -DUSE_GSTREAMER=1 -DUSE_GSTREAMER_OMX=1
+NVXIO_CFLAGS := -I../../nvxio/include -DUSE_OPENCV=1 -DUSE_GSTREAMER_OMX=1 -DUSE_GSTREAMER=1
 NVXIO_LIBS := ../../libs/$(OS_ARCH)/$(OSLOWER)/$(TARGET)$(if $(abi),/$(abi))/libnvxio.a
 
 INCLUDES :=
@@ -105,7 +105,7 @@ endif
 
 LIBRARIES += $(NVXIO_LIBS)
 LIBRARIES += $(shell pkg-config --libs freetype2) ../../3rdparty/glfw3/libs/libglfw3.a $(shell pkg-config --libs gl) $(shell pkg-config --libs xrandr xi xxf86vm x11)
-LIBRARIES +=  $(shell pkg-config --libs gstreamer-base-1.0 gstreamer-pbutils-1.0 gstreamer-app-1.0)
+LIBRARIES +=  $(shell pkg-config --libs opencv gstreamer-base-1.0 gstreamer-pbutils-1.0 gstreamer-app-1.0)
 LIBRARIES +=   -lvisionworks_sfm
 LIBRARIES += $(EXTERNAL_LIBS)
 
