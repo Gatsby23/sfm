@@ -126,11 +126,11 @@ bool GStreamerCameraFrameSourceImpl::InitializeGstPipeLine()
     // if initial values for FrameSource::Parameters are not
     // specified, let's set them manually to prevent very huge images
     if (configuration.frameWidth == (vx_uint32)-1)
-        configuration.frameWidth = 1920;
+        configuration.frameWidth = 1280;
     if (configuration.frameHeight == (vx_uint32)-1)
-        configuration.frameHeight = 1080;
+        configuration.frameHeight = 720;
     if (configuration.fps == (vx_uint32)-1)
-        configuration.fps = 30;
+        configuration.fps = 60;
 
 #if GST_VERSION_MAJOR == 0
     GstCaps* caps_v42lsrc = gst_caps_new_simple ("video/x-raw-rgb",

@@ -341,3 +341,5 @@ samples/sfm/SfM.cpp
 samples/sfm/SfM.hpp
 samples/sfm/utils.cpp
 samples/sfm/utils.hpp
+samples/sfm/MarkerRecognizer.cpp
+samples/sfm/MarkerRecognizer.h
