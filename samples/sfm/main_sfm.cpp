@@ -87,8 +87,6 @@ int VX_to_CV_Image(Mat** mat, vx_image image)
 
     *mat = pMat;
 
-    delete m_cv;
-
     return status;
 }
 
@@ -284,7 +282,6 @@ int main(int argc, char* argv[])
 
         GroundPlaneSmoother groundPlaneSmoother(7);
         Mat *opencv_frame;
-        opencv_frame=new Mat(1920, 1080, CV_8U);
         vx_image frameGray = vxCreateImage(context, 1920, 1080, VX_DF_IMAGE_U8);
         nvx::Timer totalTimer;
         totalTimer.tic();
@@ -332,9 +329,11 @@ int main(int argc, char* argv[])
                 nvx::Timer procTimer;
                 procTimer.tic();
 
+                opencv_frame=new Mat(1920, 1080, CV_8U);
                 NVXIO_SAFE_CALL( vxuColorConvert(context, frame, frameGray) );
                 VX_to_CV_Image(&opencv_frame,frameGray);
-                //std::cout << *opencv_frame->empty() << std::endl;
+                //std::cout << *opencv_frame << std::endl;
+                delete opencv_frame;
 
                 sfm->track(frame, mask);
                 proc_ms = procTimer.toc();
