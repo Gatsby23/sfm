@@ -37,7 +37,7 @@
 #include "NVXIO/Application.hpp"
 #include "NVXIO/FrameSource.hpp"
 #include "NVXIO/Utility.hpp"
-
+#include <vector>
 #include "SfM.hpp"
 #include "utils.hpp"
 #include "NVXIO/Render3D.hpp"
@@ -46,6 +46,7 @@
 // main - Application entry point
 //
 using namespace cv;
+using namespace std;
 int VX_to_CV_Image(Mat** mat, vx_image image)
 {
     vx_status status = VX_SUCCESS;
@@ -89,7 +90,6 @@ int VX_to_CV_Image(Mat** mat, vx_image image)
 
     return status;
 }
-
 
 
 int main(int argc, char* argv[])
@@ -189,6 +189,11 @@ int main(int argc, char* argv[])
                                        sourceParams.frameWidth, sourceParams.frameHeight, sourceParams.format);
         NVXIO_CHECK_REFERENCE(frame);
 
+        vx_image frame1 = vxCreateImage(context,
+                                       sourceParams.frameWidth, sourceParams.frameHeight, sourceParams.format);
+        NVXIO_CHECK_REFERENCE(frame1);
+
+
         //
         // Load mask image if needed
         //
@@ -208,6 +213,12 @@ int main(int argc, char* argv[])
                 return nvxio::Application::APP_EXIT_CODE_INVALID_DIMENSIONS;
             }
         }
+
+        //
+        //Creat vision position estimator
+        //
+        MarkerRecognizer m_recognizer;
+        Mat coorMatrix = Mat::zeros(4,4,CV_64F);
 
         //
         // Create 3D Render instance
@@ -286,75 +297,10 @@ int main(int argc, char* argv[])
 
         Mat *opencv_frame;
         vx_image frameGray = vxCreateImage(context, 1280, 720, VX_DF_IMAGE_U8);
-        Mat undistored;
+
 
         /*intrins parameter*/
-        float camera_matrix_[] =
-        {
-            1191.3086769725287f, 0.0f, 639.0f,
-            0.0f, 1191.3086769725287f, 359.25f,
-            0.0f, 0.0f, 1.0f
-        };
-        float dist_coeff_[] = {-0.44688069423840865f, 0.26100528802816081f, -0.00f, -0.000f,    -0.062279852268793255f};
-        Point3f corners_3d_598[] =
-        {
-            Point3f(-0.898f, -0.898f, 0),
-            Point3f(-0.898f, -0.702f, 0),
-            Point3f(-0.702f, -0.702f, 0),
-            Point3f(-0.702f, -0.898f, 0)
-        };
-        Point3f corners_3d_108[] =
-        {
-            Point3f(-0.898f, -0.098f, 0),
-            Point3f(-0.898f,  0.098f, 0),
-            Point3f(-0.702f,  0.098f, 0),
-            Point3f(-0.702f, -0.098f, 0)
-        };
-        Point3f corners_3d_915[] =
-        {
-            Point3f(-0.898f,  0.702f, 0),
-            Point3f(-0.898f,  0.898f, 0),
-            Point3f(-0.702f,  0.898f, 0),
-            Point3f(-0.702f,  0.702f, 0)
-        };
-        Point3f corners_3d_198[] =
-        {
-            Point3f( 0.702f,  0.702f, 0),
-            Point3f( 0.702f,  0.898f, 0),
-            Point3f( 0.898f,  0.898f, 0),
-            Point3f( 0.898f,  0.702f, 0)
-        };
-        Point3f corners_3d_213[] =
-        {
-            Point3f( 0.702f, -0.098f, 0),
-            Point3f( 0.702f,  0.098f, 0),
-            Point3f( 0.898f,  0.098f, 0),
-            Point3f( 0.898f, -0.098f, 0)
-        };
-        Point3f corners_3d_10[] =
-        {
-            Point3f( 0.702f,  0.702f, 0),
-            Point3f( 0.702f,  0.898f, 0),
-            Point3f( 0.898f,  0.898f, 0),
-            Point3f( 0.898f,  0.702f, 0)
-        };
 
-        Mat camera_matrix = Mat(3, 3, CV_32FC1, camera_matrix_).clone();
-        Mat dist_coeffs = Mat(1, 4, CV_32FC1, dist_coeff_).clone();
-        Mat transMatrix = Mat::zeros(4,4,CV_64F);
-        Mat coorMatrix = Mat::zeros(4,4,CV_64F);
-        Mat rvec,tvec,rmat;
-        vector<Point3f>m_corners_3d(24);// = vector<Point3f>(corners_3d, corners_3d + 4);
-        vector<Point3f>m_corners_3d_598 = vector<Point3f>(corners_3d_598,corners_3d_598+4);
-        vector<Point3f>m_corners_3d_108 = vector<Point3f>(corners_3d_108,corners_3d_108+4);
-        vector<Point3f>m_corners_3d_915 = vector<Point3f>(corners_3d_915,corners_3d_915+4);
-        vector<Point3f>m_corners_3d_198 = vector<Point3f>(corners_3d_198,corners_3d_198+4);
-        vector<Point3f>m_corners_3d_10  = vector<Point3f>(corners_3d_10 ,corners_3d_10+4 );
-        vector<Point3f>m_corners_3d_213 = vector<Point3f>(corners_3d_213,corners_3d_213+4);
-        vector<Point2f>m_corners_2d(24);
-
-    //    namedWindow("haha",1);
-        MarkerRecognizer m_recognizer;
 
 
         ////////////////////////////////////////
@@ -367,14 +313,17 @@ int main(int argc, char* argv[])
         float yGroundPlane = 0;
         while (!eventData.shouldStop)
         {
+
             if (!eventData.pause)
             {
-//                cv::Mat fran=cv::Mat::eye(100,100,CV_8UC3);
-//                cv::gpu::GpuMat frames,frame1;
-//                frames.upload(fran);
-//                cv::gpu::cvtColor(frames,frame1,CV_BGR2GRAY);
 
-                frameStatus = source->fetch(frame);
+//                cv::Mat fran=cv::Mat::eye(100,100,CV_8UC3);
+//                cv::cuda::GpuMat frames,frame1;
+//                frames.upload(fran);
+//                cv::cuda::cvtColor(frames,frame1,CV_BGR2GRAY);
+
+                frameStatus = source->fetch(frame);//10ms
+
 
                 if (frameStatus == nvxio::FrameSource::TIMEOUT)
                 {
@@ -409,63 +358,26 @@ int main(int argc, char* argv[])
 
                 opencv_frame = new Mat(1280, 720, CV_8U);
                 NVXIO_SAFE_CALL( vxuColorConvert(context, frame, frameGray) );
-                VX_to_CV_Image(&opencv_frame,frameGray);
+                VX_to_CV_Image(&opencv_frame,frameGray);//3ms
                 //std::cout << *opencv_frame << std::endl;
 
-                undistort(*opencv_frame,undistored,camera_matrix,dist_coeffs);
 
-                m_recognizer.update(undistored,100);
 
-                vector<Marker>& markers = m_recognizer.getMarkers();
-                m_corners_3d.clear();
-                m_corners_2d.clear();
-        //
-                for (int i = 0; i < markers.size();i++)
+//               undistort(*opencv_frame,undistored,camera_matrix,dist_coeffs);
+
+                if(m_recognizer.position_est(*opencv_frame))
                 {
-                    switch (markers[i].m_id)
-                    {
-                    case 598 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_598.begin(),m_corners_3d_598.end());break;
-                    case 108 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_108.begin(),m_corners_3d_108.end());break;
-                    case 915 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_915.begin(),m_corners_3d_915.end());break;
-                    case 198 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_198.begin(),m_corners_3d_198.end());break;
-                    case 213 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_213.begin(),m_corners_3d_213.end());break;
-                    case 10  : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_10.begin() ,m_corners_3d_10.end() );break;
-                    }
-                    m_corners_2d.insert(m_corners_2d.end(),markers[i].m_corners.begin(),markers[i].m_corners.end());
-
-                }
-
- //               std::cout << m_corners_3d.size() << std::endl;
-                  if(m_corners_3d.size() >0 )
-                {
-                    solvePnP(m_corners_3d,m_corners_2d,camera_matrix,dist_coeffs,rvec,tvec);
-                    Rodrigues(rvec, rmat);
-                    for(int nr = 0;nr < 3; nr++)
-                    {
-                        double *datar = rmat.ptr<double>(nr);
-                        double *datat = transMatrix.ptr<double>(nr);
-                        for(int nc = 0;nc < 3; nc++)
-                        {
-                            datat[nc]=datar[nc];
-                        }
-                    }
-                    transMatrix.at<double>(0,3) = tvec.at<double>(0,0);
-                    transMatrix.at<double>(1,3) = tvec.at<double>(1,0);
-                    transMatrix.at<double>(2,3) = tvec.at<double>(2,0);
-                    transMatrix.at<double>(3,3) = 1.f;
-                    coorMatrix = transMatrix.inv();
+                    coorMatrix = m_recognizer.get_position();
                     std::cout << coorMatrix << std::endl;
-                  }
-
-
+                }
                 delete opencv_frame;
 
-                sfm->track(frame, mask);
+//                sfm->track(frame, mask);
                 proc_ms = procTimer.toc();
             }
 
             // Print performance results
-            sfm->printPerfs();
+//            sfm->printPerfs();
 
             if (!eventData.showPointCloud)
             {
@@ -520,6 +432,8 @@ int main(int argc, char* argv[])
             {
                 eventData.shouldStop = true;
             }
+
+
         }
 
         //
@@ -530,6 +444,7 @@ int main(int argc, char* argv[])
         vxReleaseMatrix(&model);
         vxReleaseArray(&filteredPoints);
         vxReleaseArray(&planesVertices);
+
     }
 //    catch (const std::exception& e)
 //    {
@@ -538,4 +453,5 @@ int main(int argc, char* argv[])
 //    }
 
     return nvxio::Application::APP_EXIT_CODE_SUCCESS;
+
 }

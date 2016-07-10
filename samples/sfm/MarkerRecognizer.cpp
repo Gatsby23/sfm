@@ -31,31 +31,31 @@ Marker::Marker(int _id, cv::Point2f _c0, cv::Point2f _c1, cv::Point2f _c2, cv::P
     m_corners.push_back(_c3);
 }
 
-void Marker::drawToImage(cv::Mat& image, cv::Scalar color, float thickness)
-{
-    circle(image, m_corners[0], thickness*2, color, thickness);
-    circle(image, m_corners[1], thickness, color, thickness);
-    line(image, m_corners[0], m_corners[1], color, thickness, CV_AA);
-    line(image, m_corners[1], m_corners[2], color, thickness, CV_AA);
-    line(image, m_corners[2], m_corners[3], color, thickness, CV_AA);
-    line(image, m_corners[3], m_corners[0], color, thickness, CV_AA);
+//void Marker::drawToImage(cv::Mat& image, cv::Scalar color, float thickness)
+//{
+//    circle(image, m_corners[0], thickness*2, color, thickness);
+//    circle(image, m_corners[1], thickness, color, thickness);
+//    line(image, m_corners[0], m_corners[1], color, thickness, CV_AA);
+//    line(image, m_corners[1], m_corners[2], color, thickness, CV_AA);
+//    line(image, m_corners[2], m_corners[3], color, thickness, CV_AA);
+//    line(image, m_corners[3], m_corners[0], color, thickness, CV_AA);
 
-    Point text_point = m_corners[0] + m_corners[2];
-    text_point.x /= 2;
-    text_point.y /= 2;
+//    Point text_point = m_corners[0] + m_corners[2];
+//    text_point.x /= 2;
+//    text_point.y /= 2;
 
-    stringstream ss;
-    ss << m_id;
+//    stringstream ss;
+//    ss << m_id;
 
-    putText(image, ss.str(), text_point, FONT_HERSHEY_SIMPLEX, 0.5, color);
-}
+//    putText(image, ss.str(), text_point, FONT_HERSHEY_SIMPLEX, 0.5, color);
+//}
 
-void Marker::estimateTransformToCamera(vector<Point3f> corners_3d, cv::Mat& camera_matrix, cv::Mat& dist_coeff, cv::Mat& rmat, cv::Mat& tvec)
-{
-    Mat rot_vec;
-    bool res = solvePnP(corners_3d, m_corners, camera_matrix, dist_coeff, rot_vec, tvec);
-    Rodrigues(rot_vec, rmat);
-}
+//void Marker::estimateTransformToCamera(vector<Point3f> corners_3d, cv::Mat& camera_matrix, cv::Mat& dist_coeff, cv::Mat& rmat, cv::Mat& tvec)
+//{
+//    Mat rot_vec;
+//    bool res = cv::solvePnP(corners_3d, m_corners, camera_matrix, dist_coeff, rot_vec, tvec);
+//    Rodrigues(rot_vec, rmat);
+//}
 
 
 
@@ -70,22 +70,22 @@ MarkerRecognizer::MarkerRecognizer()
 
 int MarkerRecognizer::update(Mat& image_gray, int min_size, int min_side_length)
 {
-    CV_Assert(!image_gray.empty());
-    CV_Assert(image_gray.type() == CV_8U);
-
+//    CV_Assert(!image_gray.empty());
+//    CV_Assert(image_gray.type() == CV_8U);
+//double t = (double)getTickCount();
     Mat img_gray = image_gray.clone();
-
+//t = ((double)getTickCount()-t)/getTickFrequency();
     //equalizeHist(img_gray, img_gray);
 
     vector<Marker> possible_markers;
 
-    markerDetect(img_gray, possible_markers, min_size, min_side_length);
+    markerDetect(img_gray, possible_markers, min_size, min_side_length);//18ms
 
-    markerRecognize(img_gray, possible_markers, m_markers);
+    markerRecognize(img_gray, possible_markers, m_markers);//0.5ms
 
-    double t = (double)getTickCount();
-    markerRefine(img_gray, m_markers);
-    t = ((double)getTickCount()-t)/getTickFrequency();
+
+    markerRefine(img_gray, m_markers);//ignore
+
 //    cout << t <<endl;
     return m_markers.size();
 }
@@ -94,7 +94,6 @@ void MarkerRecognizer::markerDetect(Mat& img_gray, vector<Marker>& possible_mark
 {
     Mat img_bin;
 
-    int thresh_size = (min_size/4)*2 + 1;
 //    adaptiveThreshold(img_gray, img_bin, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, thresh_size, thresh_size/3);
     threshold(img_gray, img_bin, 125, 255, THRESH_BINARY_INV|THRESH_OTSU);
     morphologyEx(img_bin, img_bin, MORPH_OPEN, Mat());	//use open operator to eliminate small patch
@@ -294,10 +293,126 @@ vector<Marker>& MarkerRecognizer::getMarkers()
     return m_markers;
 }
 
-void MarkerRecognizer::drawToImage(cv::Mat& image, cv::Scalar color, float thickness)
+//void MarkerRecognizer::drawToImage(cv::Mat& image, cv::Scalar color, float thickness)
+//{
+//    for (int i = 0; i < m_markers.size(); ++i)
+//    {
+//        m_markers[i].drawToImage(image, color, thickness);
+//    }
+//}
+
+bool MarkerRecognizer::position_est(cv::Mat opencv_frame)
 {
-    for (int i = 0; i < m_markers.size(); ++i)
+    update(opencv_frame,100);
+    m_corners_3d.clear();
+    m_corners_2d.clear();
+    for (int i = 0; i < m_markers.size();i++)
     {
-        m_markers[i].drawToImage(image, color, thickness);
+        switch (m_markers[i].m_id)
+        {
+        case 598 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_598.begin(),m_corners_3d_598.end());break;
+        case 108 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_108.begin(),m_corners_3d_108.end());break;
+        case 915 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_915.begin(),m_corners_3d_915.end());break;
+        case 198 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_198.begin(),m_corners_3d_198.end());break;
+        case 213 : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_213.begin(),m_corners_3d_213.end());break;
+        case 10  : m_corners_3d.insert(m_corners_3d.end(),m_corners_3d_10.begin() ,m_corners_3d_10.end() );break;
+        }
+        m_corners_2d.insert(m_corners_2d.end(),m_markers[i].m_corners.begin(),m_markers[i].m_corners.end());
+
     }
+
+    if(m_corners_3d.size() >0 && (m_corners_3d.size() ==  m_corners_2d.size()))
+    {
+        solvePnP(m_corners_3d,m_corners_2d,camera_matrix,dist_coeffs,rvec,tvec);
+        Rodrigues(rvec, rmat);
+        for(int nr = 0;nr < 3; nr++)
+        {
+            double *datar = rmat.ptr<double>(nr);
+            double *datat = transMatrix.ptr<double>(nr);
+            for(int nc = 0;nc < 3; nc++)
+            {
+                datat[nc]=datar[nc];
+            }
+        }
+        transMatrix.at<double>(0,3) = tvec.at<double>(0,0);
+        transMatrix.at<double>(1,3) = tvec.at<double>(1,0);
+        transMatrix.at<double>(2,3) = tvec.at<double>(2,0);
+        transMatrix.at<double>(3,3) = 1.f;
+        coorMatrix = transMatrix.inv();
+//        std::cout << coorMatrix << std::endl;
+        return true;
+    }
+    return false;
 }
+
+cv::Mat MarkerRecognizer::get_position()
+{
+    return coorMatrix;
+}
+
+//std::vector<cv::Point3f> obj_recognize(cv::Mat opencv_frame)
+//{
+//    Mat frameH(720,1280,CV_8UC1);
+//    Mat frameRED1(720,1280,CV_8UC1);
+//    Mat frameRED2(720,1280,CV_8UC1);
+//    Mat frameRED(720,1280,CV_8UC1);
+//    Mat frameS(720,1280,CV_8UC1);
+
+//    cvtColor(opencv_frame, opencv_frame, CV_BGR2HSV);
+
+//    int from_toH[]={0,0};
+//    int from_toS[] = {1,0};
+//    mixChannels(&opencv_frame,1,&frameH,1,from_toH,1);
+//    mixChannels(&opencv_frame,1,&frameS,1,from_toS,1);
+//    double t = (double)getTickCount();
+//    threshold(frameS,frameS,30,255,THRESH_BINARY);
+//    threshold(frameH,frameRED1,165,255,THRESH_BINARY);
+//    threshold(frameH,frameRED2,0,255,THRESH_BINARY_INV);
+//    bitwise_or(frameRED1,frameRED2,frameRED);
+//    bitwise_and(frameRED,frameS,frameRED);
+//    vector<vector<Point> > all_contours;
+//    vector<vector<Point> > contours;
+//    findContours(frameRED, all_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+//    for (int i = 0; i < all_contours.size(); ++i)
+//    {
+//        if (all_contours[i].size() > 200)
+//        {
+//            contours.push_back(all_contours[i]);
+//        }
+//    }
+//    vector<Point> approx_poly;
+//    vector<Point2f> bottom_point;
+//    for (int i = 0; i < contours.size(); ++i)
+//    {
+//        double eps = contours[i].size()*APPROX_POLY_EPS;
+//        approxPolyDP(contours[i], approx_poly, eps, true);
+
+//        if (approx_poly.size() != 6)
+//            continue;
+
+//        if (!isContourConvex(approx_poly))
+//            continue;
+
+//        //Ensure that the distance between consecutive points is large enough
+//        float min_side = FLT_MAX;
+//        for (int j = 0; j < 6; ++j)
+//        {
+//            Point side = approx_poly[j] - approx_poly[(j+1)%6];
+//            min_side = min(100, side.dot(side));
+//        }
+//        if (min_side < 100)
+//            continue;
+//        int max_p = 0;
+//        int max_y = 0;
+//        for (int j = 0; j < 6; ++j)
+//        {
+//            if(approx_poly[j].y > max_y)
+//            {
+//                max_y = approx_poly[j].y;
+//                max_p = j;
+//            }
+//        }
+//        bottom_point.push_back((Point2f)approx_poly[max_p]);
+//    }
+//    cornerSubPix(frameRED,bottom_point , Size(5,5), Size(-1,-1), TermCriteria(CV_TERMCRIT_ITER, 30, 0.1));
+//}

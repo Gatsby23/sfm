@@ -418,6 +418,9 @@ namespace
         // OpenVX graph and nodes (used to print performance results)
         vx_graph main_graph_;
         vx_node cvt_color_node_;
+        vx_node extract_r_node_;
+        vx_node extract_g_node_;
+        vx_node extract_b_node_;
         vx_node pyr_node_;
         vx_node opt_flow_node_;
         vx_node feature_track_node_;
@@ -597,11 +600,11 @@ namespace
             gpHeightThreshold_ = 3 * height / 4;
 
             // assume that the normal to the ground plane is vertical
-            float gpNormalData[] = {0, 1, 0};
+            float gpNormalData[] = {0, 0.866, 0.5};
             vxWriteMatrix(gpNormal_, gpNormalData);
 
             //assume that expected height from camera to ground plane is equal to 1.5 m
-            expectedGpHeight = 1.5f;
+            expectedGpHeight = 1.2f;
 
             createMainGraph(firstFrame, mask);
         }
@@ -902,12 +905,28 @@ namespace
         vx_image frameGray = vxCreateVirtualImage(main_graph_, width_, height_, VX_DF_IMAGE_U8);
         NVXIO_CHECK_REFERENCE(frameGray);
 
+        //creat single channel image
+        vx_image frameR = vxCreateVirtualImage(main_graph_,width_, height_,VX_DF_IMAGE_U8);//r
+        NVXIO_CHECK_REFERENCE(frameR);
+        vx_image frameG = vxCreateVirtualImage(main_graph_,width_, height_,VX_DF_IMAGE_U8);//r
+        NVXIO_CHECK_REFERENCE(frameG);
+        vx_image frameB = vxCreateVirtualImage(main_graph_,width_, height_,VX_DF_IMAGE_U8);//r
+        NVXIO_CHECK_REFERENCE(frameB);
+
+        //RGB to single channel conversion nodes
+        extract_r_node_ = vxChannelExtractNode(main_graph_,frame,VX_CHANNEL_R,frameR);
+        NVXIO_CHECK_REFERENCE(extract_r_node_);
+        extract_g_node_ = vxChannelExtractNode(main_graph_,frame,VX_CHANNEL_G,frameG);
+        NVXIO_CHECK_REFERENCE(extract_g_node_);
+        extract_b_node_ = vxChannelExtractNode(main_graph_,frame,VX_CHANNEL_B,frameB);
+        NVXIO_CHECK_REFERENCE(extract_b_node_);
+
         // RGB to Y conversion nodes
         cvt_color_node_ = vxColorConvertNode(main_graph_, frame, frameGray);
         NVXIO_CHECK_REFERENCE(cvt_color_node_);
 
         // Pyramid image node
-        pyr_node_ = vxGaussianPyramidNode(main_graph_, frameGray, (vx_pyramid)vxGetReferenceFromDelay(pyr_delay_, 0));
+        pyr_node_ = vxGaussianPyramidNode(main_graph_, frameR, (vx_pyramid)vxGetReferenceFromDelay(pyr_delay_, 0));
         NVXIO_CHECK_REFERENCE(pyr_node_);
 
         // Lucas-Kanade optical flow node
@@ -1010,6 +1029,9 @@ namespace
         vxReleaseScalar(&s_lk_num_iters);
         vxReleaseScalar(&s_lk_use_init_est);
         vxReleaseImage(&frameGray);
+        vxReleaseImage(&frameR);
+        vxReleaseImage(&frameG);
+        vxReleaseImage(&frameB);
         vxReleaseArray(&filteredPoints0);
         vxReleaseArray(&filteredPoints1);
     }
